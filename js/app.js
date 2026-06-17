@@ -76,24 +76,28 @@ function browserChrome() {
 /* ============================================================
    BARRE D'OUTILS DU PROTOTYPE (sélecteur d'écran, vue, annotations)
    ============================================================ */
+/* Identifiant unique + titre par vue (source unique pour la navigation
+   et les annotations). Numérotation hiérarchique : les variations d'un
+   même écran partagent le numéro parent (ex. 4.1 / 4.2). */
+const VIEW_INFO = {
+  login:          { num: "1",   title: "Identifiants" },
+  planning:       { num: "2",   title: "Planning" },
+  slot:           { num: "3",   title: "Choix du terrain" },
+  "booking-new":  { num: "4.1", title: "Joueurs · nouvelle partie" },
+  "booking-join": { num: "4.2", title: "Joueurs · rejoindre une partie" },
+  payment:        { num: "5",   title: "Paiement" },
+  confirmation:   { num: "6",   title: "Confirmation" },
+  reservations:   { num: "7",   title: "Mes réservations" },
+  adhesion:       { num: "8",   title: "Adhésion" },
+  compte:         { num: "9",   title: "Compte" },
+  admin:          { num: "10",  title: "Espace club" },
+};
+const viewLabel = (key) => (VIEW_INFO[key] ? `${VIEW_INFO[key].num} · ${VIEW_INFO[key].title}` : "");
+
 const JUMP_GROUPS = [
-  { label: "Réservation", items: [
-    ["login", "1 · Identifiants"],
-    ["planning", "2 · Planning"],
-    ["slot", "3 · Choix du terrain"],
-    ["booking-new", "4 · Joueurs — nouvelle partie"],
-    ["booking-join", "4 · Joueurs — rejoindre une partie"],
-    ["payment", "5 · Paiement"],
-    ["confirmation", "Confirmation"],
-  ]},
-  { label: "Espace membre", items: [
-    ["reservations", "Mes réservations"],
-    ["adhesion", "Adhésion"],
-    ["compte", "Compte"],
-  ]},
-  { label: "Club", items: [
-    ["admin", "Espace club (admin)"],
-  ]},
+  { label: "Réservation", items: ["login", "planning", "slot", "booking-new", "booking-join", "payment", "confirmation"] },
+  { label: "Espace membre", items: ["reservations", "adhesion", "compte"] },
+  { label: "Club", items: ["admin"] },
 ];
 
 /* Clé de l'option sélectionnée à partir de l'état courant */
@@ -106,7 +110,7 @@ function renderToolbar() {
   const cur = currentJumpKey();
   const options = JUMP_GROUPS.map((g) =>
     `<optgroup label="${g.label}">` +
-    g.items.map(([v, l]) => `<option value="${v}" ${v === cur ? "selected" : ""}>${l}</option>`).join("") +
+    g.items.map((v) => `<option value="${v}" ${v === cur ? "selected" : ""}>${viewLabel(v)}</option>`).join("") +
     `</optgroup>`).join("");
 
   toolbar.innerHTML = `
@@ -261,18 +265,8 @@ function tabBar() {
    Les repères de validation et les questions client vivent ici,
    pour ne pas être confondus avec l'interface réelle.
    ============================================================ */
-const SCREEN_LABELS = {
-  login: "Étape 1 · Identifiants",
-  planning: "Étape 2 · Planning",
-  slot: "Étape 3 · Choix du terrain",
-  booking: "Étape 4 · Joueurs",
-  payment: "Étape 5 · Paiement",
-  confirmation: "Confirmation",
-  reservations: "Mes réservations",
-  adhesion: "Adhésion",
-  compte: "Compte",
-  admin: "Espace club",
-};
+/* Le libellé d'écran du panneau reprend l'identifiant unique de la vue
+   (même source que la navigation), variation comprise (4.1 / 4.2). */
 
 /* Renvoie les annotations de l'écran courant : { tag, html, q } */
 function notesFor() {
@@ -340,7 +334,7 @@ function renderNotes() {
     ? items.map((n) => `<div class="note ${n.q ? "q" : ""}"><span class="tag">${n.tag}</span><div>${n.html}</div></div>`).join("")
     : `<p class="np-empty">Aucune annotation pour cet écran.</p>`;
   const body = `<div class="np-body">
-      <p class="np-screen-label">${SCREEN_LABELS[state.screen] || ""}</p>
+      <p class="np-screen-label">${viewLabel(currentJumpKey())}</p>
       ${list}
     </div>`;
   notesEl.innerHTML = head + body;
@@ -524,8 +518,9 @@ function startBooking(courtId) {
     name: `${p.firstName} ${p.lastName}`, level: p.level, tag: "Adhérent",
   }));
   f.capacity = 4 - f.existing.length; // places que l'utilisateur peut occuper
-  // Première place = l'utilisateur (le payeur)
-  f.spots = [{ kind: "me" }];
+  // Nouvelle partie : aucun joueur pré-sélectionné (on peut réserver pour des tiers).
+  // En rejoignant une partie : l'utilisateur s'ajoute par défaut.
+  f.spots = f.joining ? [{ kind: "me" }] : [];
 }
 
 function viewBooking() {
@@ -566,6 +561,7 @@ function viewBooking() {
     ${existingHtml}
 
     <div class="section-title">${f.joining ? "Vous ajoutez" : "Vos joueurs"}</div>
+    ${f.spots.length === 0 ? `<p class="muted" style="font-size:13px;margin:0 2px 10px;">Ajoutez les joueurs de la partie — vous-même, des adhérents ou des invités.</p>` : ""}
     ${spotsHtml}
     ${canAdd ? addHtml : ""}`;
 }
@@ -635,7 +631,7 @@ function barBooking() {
   return `
     <div class="actionbar stacked">
       <div class="ab-summary"><span class="ab-lbl">Total · ${n} joueur${n > 1 ? "s" : ""}</span><span class="ab-amount">${total} €</span></div>
-      <button class="btn" data-action="goto-payment">Continuer</button>
+      <button class="btn" data-action="goto-payment" ${n === 0 ? "disabled" : ""}>Continuer</button>
     </div>`;
 }
 
@@ -816,7 +812,6 @@ function viewAdhesion() {
       </div>
       <p class="muted" style="font-size:13px;margin:8px 0 14px;">Saison de septembre à août. La 1ʳᵉ année est calculée au prorata des mois restants.</p>
       <button class="btn" data-action="noop">Adhérer / renouveler sur le site ↗</button>
-      <p class="muted center" style="font-size:12px;margin:12px 2px 0;">La souscription s'effectue sur le site principal (hors périmètre de cette application).</p>
     </div>`;
 }
 
@@ -846,13 +841,7 @@ function viewCompte() {
     </div>
     <p class="muted" style="font-size:12px;margin:-2px 2px 0;">Le niveau est défini par le club et n'est pas modifiable par le joueur.</p>
 
-    <div class="feature-soon" style="border-style:solid;margin-top:14px;">
-      <span class="fs-ico">↗</span>
-      <div><div style="font-weight:600;color:var(--ink-2);font-size:13.5px;">Modifier mes informations</div>
-      <div style="font-size:11.5px;">La modification de vos coordonnées s'effectue dans votre espace membre sur le site (Wix).</div></div>
-    </div>
-
-    <button class="btn secondary" data-action="goto" data-screen="login" style="margin-top:14px;">Se déconnecter</button>`;
+    <button class="btn secondary" data-action="goto" data-screen="login" style="margin-top:18px;">Se déconnecter</button>`;
 }
 
 /* ============================================================
@@ -889,6 +878,15 @@ function viewModal() {
 }
 
 function modalMembers() {
+  const meAdded = state.flow.spots.some((s) => s.kind === "me");
+  const meRow = meAdded ? "" : `
+    <button class="player" style="width:100%;text-align:left;cursor:pointer;" data-action="select-me">
+      <div class="avatar me">${initials(CURRENT_USER.firstName + " " + CURRENT_USER.lastName)}</div>
+      <div class="pinfo"><div class="pname">${CURRENT_USER.firstName} ${CURRENT_USER.lastName} <span class="muted" style="font-weight:400;">(vous)</span></div>
+        <div class="pmeta"><span>${CURRENT_USER.level}</span> · <span class="badge" style="font-size:10px;">Adhérent</span></div></div>
+      <span class="chev">＋</span>
+    </button>`;
+
   const chosen = new Set(state.flow.spots.filter((s) => s.kind === "member").map((s) => s.member.id));
   const rows = MEMBERS.filter((m) => !chosen.has(m.id)).map((m) => `
     <button class="player" style="width:100%;text-align:left;cursor:pointer;" data-action="select-member" data-id="${m.id}">
@@ -898,7 +896,7 @@ function modalMembers() {
       <span class="chev">＋</span>
     </button>`).join("");
   return `<h3>Choisir un adhérent</h3>
-    <div class="field"><input placeholder="Rechercher un adhérent…" readonly></div>${rows}`;
+    <div class="field"><input placeholder="Rechercher un adhérent…" readonly></div>${meRow}${rows}`;
 }
 
 function modalGuest() {
@@ -995,6 +993,12 @@ app.addEventListener("click", (e) => {
 
     case "add-member":
       state.modal = { type: "members" };
+      break;
+
+    case "select-me":
+      if (!state.flow.spots.some((s) => s.kind === "me") && state.flow.spots.length < state.flow.capacity)
+        state.flow.spots.unshift({ kind: "me" });
+      state.modal = null;
       break;
 
     case "select-member": {

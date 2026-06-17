@@ -26,7 +26,7 @@
   --font: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --toolbar-h: 46px;
-  --frame-h: calc(100vh - var(--toolbar-h) - 44px);
+  --frame-h: calc(100vh - var(--toolbar-h) - 24px);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -39,13 +39,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ---------- Pied de page (crédit, hors maquette) ---------- */
+.page-footer {
+  text-align: center;
+  padding: 24px 16px 40px;
+}
+.pf-logo { display: block; width: 200px; max-width: 60%; height: auto; margin: 0 auto; }
+.pf-note {
+  font-size: 11.5px; color: var(--muted);
+  margin: 8px auto 0; max-width: 440px; line-height: 1.45;
+}
+
 /* ---------- Scène : device + panneau d'annotations ---------- */
 .stage {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 18px;
-  padding: 18px 16px 32px;
+  padding: 12px 16px;
 }
 @media (max-width: 479px) { .stage { padding: 0; } }
 @media (min-width: 1024px) {
@@ -55,6 +66,13 @@ body {
     align-items: flex-start;
     justify-content: center;
     gap: 24px;
+  }
+  /* En vue desktop, le device partage la rangée avec le panneau
+     (il rétrécit pour tenir) au lieu de le faire passer en dessous. */
+  .device.view-desktop {
+    flex: 1 1 600px;
+    min-width: 0;
+    margin: 0;
   }
 }
 button { font-family: inherit; cursor: pointer; }
@@ -401,12 +419,22 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
   background: var(--ink); color: #fff; border-radius: 5px; padding: 3px 6px; text-transform: uppercase;
 }
 .note.q .tag { background: var(--surface); color: var(--ink); border: 1px solid var(--ink); }
-/* ---------- Panneau d'annotations (hors device) ---------- */
+/* ---------- Panneau d'annotations (hors device) ----------
+   Même palette que la barre d'outils (indigo / violet) pour
+   bien signaler qu'il s'agit d'un outil de revue, pas du produit. */
 .notes-panel {
+  --np-bg: #211f37;
+  --np-accent: #a78bfa;
+  --np-fg: #f0eff7;
+  --np-muted: #9b98c2;
+  --np-stroke: rgba(255,255,255,.16);
+  --np-soft: rgba(255,255,255,.06);
+
   width: 100%;
   max-width: 430px;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--np-bg);
+  color: var(--np-fg);
+  border: 1px solid var(--np-bg);
   border-radius: 16px;
   overflow: hidden;
   align-self: stretch;
@@ -425,28 +453,32 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
 }
 .np-head {
   display: flex; align-items: flex-start; gap: 10px;
-  padding: 14px 16px; border-bottom: 1px solid var(--line);
-  background: var(--surface-2); position: sticky; top: 0;
+  padding: 14px 16px; border-bottom: 2px solid var(--np-accent);
+  background: var(--np-soft); position: sticky; top: 0;
 }
 .np-head .np-mark {
   width: 30px; height: 30px; border-radius: 8px; flex: 0 0 auto;
-  border: 1px dashed var(--line-2); display: grid; place-items: center; font-size: 15px;
+  border: 1px dashed var(--np-stroke); color: var(--np-fg);
+  display: grid; place-items: center; font-size: 15px;
 }
-.np-title { font-size: 14px; font-weight: 700; letter-spacing: -.2px; }
-.np-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
-.np-toggle {
-  margin-left: auto; flex: 0 0 auto; align-self: center;
-  border: 1px solid var(--line-2); background: var(--surface);
-  border-radius: 999px; padding: 6px 12px; font-size: 11.5px; font-weight: 650; color: var(--ink);
-}
+.np-title { font-size: 14px; font-weight: 700; letter-spacing: -.2px; color: var(--np-fg); }
+.np-sub { font-size: 11px; color: var(--np-muted); margin-top: 1px; }
 .np-body { padding: 14px 16px; }
 .np-screen-label {
   font-size: 10px; text-transform: uppercase; letter-spacing: .6px;
-  color: var(--muted-2); font-weight: 700; margin: 0 0 10px;
+  color: var(--np-accent); font-weight: 700; margin: 0 0 10px;
 }
-.np-empty { color: var(--muted); font-size: 13px; margin: 4px 2px; }
-.notes-panel .note { margin: 0 0 10px; }
+.np-empty { color: var(--np-muted); font-size: 13px; margin: 4px 2px; }
+
+.notes-panel .note {
+  margin: 0 0 10px;
+  border: 1px solid var(--np-stroke);
+  background: var(--np-soft);
+  color: var(--np-fg);
+}
 .notes-panel .note:last-child { margin-bottom: 0; }
+.notes-panel .note .tag { background: var(--np-accent); color: var(--np-bg); }
+.notes-panel .note.q .tag { background: transparent; color: var(--np-accent); border: 1px solid var(--np-accent); }
 
 /* ---------- Divers ---------- */
 .center { text-align: center; }
