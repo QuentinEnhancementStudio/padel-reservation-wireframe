@@ -597,6 +597,13 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
   box-shadow: 0 6px 16px rgba(20,12,18,.34);
 }
 .toolbar svg { width: 16px; height: 16px; display: block; }
+.tb-logo {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  display: inline-flex; align-items: center; opacity: .92;
+  transition: opacity .15s ease;
+}
+.tb-logo:hover { opacity: 1; }
+.tb-logo img { height: 18px; width: auto; display: block; }
 .tb-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .tb-badge {
   width: 24px; height: 24px; flex: 0 0 auto;
@@ -606,17 +613,23 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
 .tb-controls { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
 .tb-group { display: flex; align-items: center; gap: 6px; }
 .tb-ico { display: inline-flex; color: var(--tb-muted); }
+/* Chip clair (texte sombre) : lisible aussi bien fermé sur la barre
+   sombre qu'ouvert sur le menu natif blanc — évite le bug Windows où
+   le contrôle fermé hérite de la couleur sombre des <option>. */
 .tb-select {
   border: 1px solid var(--tb-stroke); border-radius: 8px;
-  background: var(--tb-soft); color: var(--tb-fg);
+  background-color: #fff; color: #241420;
   font-family: var(--ces-font-body);
   font-size: 12.5px; font-weight: 500; padding: 5px 26px 5px 9px; min-height: 32px;
   max-width: 220px;
   appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23C9BCC8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23241420' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 9px center;
 }
-.tb-select option { color: #1c1c1e; background: #fff; }
+.tb-select:hover { border-color: var(--tb-accent); }
+.tb-select:focus-visible { outline: 2px solid var(--tb-accent); outline-offset: 1px; }
+.tb-select option { color: #241420; background: #fff; font-weight: 500; }
+.tb-select optgroup { color: #241420; background: #fff; font-weight: 700; }
 .seg {
   display: inline-flex; border: 1px solid var(--tb-stroke);
   border-radius: 8px; overflow: hidden; background: var(--tb-soft);

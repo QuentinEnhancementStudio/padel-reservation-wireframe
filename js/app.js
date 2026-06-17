@@ -51,7 +51,7 @@ function render() {
     case "reservations": html = shell(viewReservations(), { tabs: true, title: "Mes réservations" }); break;
     case "adhesion": html = shell(viewAdhesion(), { tabs: true, title: "Adhésion" }); break;
     case "compte": html = shell(viewCompte(), { tabs: true, title: "Compte" }); break;
-    case "admin": html = shell(viewAdmin(), { back: "compte", title: "Espace club" }); break;
+    case "admin": html = shell(viewAdmin(), { back: "compte", title: "Administration" }); break;
     default: html = viewLogin();
   }
   app.className = "device view-" + state.view;
@@ -90,14 +90,14 @@ const VIEW_INFO = {
   reservations:   { num: "7",   title: "Mes réservations" },
   adhesion:       { num: "8",   title: "Adhésion" },
   compte:         { num: "9",   title: "Compte" },
-  admin:          { num: "10",  title: "Espace club" },
+  admin:          { num: "10",  title: "Administration" },
 };
 const viewLabel = (key) => (VIEW_INFO[key] ? `${VIEW_INFO[key].num} · ${VIEW_INFO[key].title}` : "");
 
 const JUMP_GROUPS = [
   { label: "Réservation", items: ["login", "planning", "slot", "booking-new", "booking-join", "payment", "confirmation"] },
   { label: "Espace membre", items: ["reservations", "adhesion", "compte"] },
-  { label: "Club", items: ["admin"] },
+  { label: "Administration", items: ["admin"] },
 ];
 
 /* Clé de l'option sélectionnée à partir de l'état courant */
@@ -114,6 +114,9 @@ function renderToolbar() {
     `</optgroup>`).join("");
 
   toolbar.innerHTML = `
+    <a class="tb-logo" href="https://code.enhancement.studio/" target="_blank" rel="noopener" aria-label="Enhancement Studio">
+      <img src="assets/logo-white.svg" alt="Enhancement Studio" />
+    </a>
     <div class="tb-controls">
       <div class="tb-group">
         <span class="tb-ico" aria-hidden="true">${ICONS.screens}</span>
@@ -861,7 +864,7 @@ function viewAdmin() {
     </button>`).join("");
 
   return `
-    <h1 class="page">Espace club</h1>
+    <h1 class="page">Administration</h1>
     <p class="page-sub">Gestion des adhérents · moniteur en chef</p>
 
     <div class="section-title">Adhérents</div>
