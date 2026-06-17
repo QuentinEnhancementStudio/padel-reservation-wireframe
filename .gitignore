@@ -1,0 +1,10 @@
+# Dev tooling (local preview config)
+.claude/
+
+# Dependencies
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
