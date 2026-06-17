@@ -467,6 +467,13 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
 }
 .np-title { font-size: 14px; font-weight: 700; letter-spacing: -.2px; color: var(--np-fg); }
 .np-sub { font-size: 11px; color: var(--np-muted); margin-top: 1px; }
+.np-close {
+  margin-left: auto; flex: 0 0 auto; align-self: flex-start;
+  width: 26px; height: 26px; border-radius: 7px;
+  border: 1px solid var(--np-stroke); background: var(--np-soft); color: var(--np-fg);
+  display: grid; place-items: center; font-size: 14px; line-height: 1; cursor: pointer;
+}
+.np-close:hover { background: rgba(255,255,255,.14); }
 .np-body { padding: 14px 16px; }
 .np-screen-label {
   font-size: 10px; text-transform: uppercase; letter-spacing: .6px;

@@ -337,6 +337,7 @@ function renderNotes() {
         <div class="np-title">Annotations du wireframe</div>
         <div class="np-sub">Repères de validation · invisibles pour l'utilisateur final</div>
       </div>
+      <button class="np-close" data-action="toggle-notes" aria-label="Masquer les annotations" title="Masquer les annotations">✕</button>
     </div>`;
 
   const list = items.length
@@ -348,6 +349,14 @@ function renderNotes() {
     </div>`;
   notesEl.innerHTML = head + body;
 }
+
+/* Bouton « fermer » du panneau (hors #app) : replie les annotations. */
+notesEl.addEventListener("click", (e) => {
+  if (e.target.closest('[data-action="toggle-notes"]')) {
+    state.showNotes = false;
+    applyNotesVisibility();
+  }
+});
 
 /* ============================================================
    ÉCRAN 1 — Identifiants
@@ -761,9 +770,9 @@ function upcomingCard(b) {
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
         <div>
-          <div style="font-weight:700;font-size:16px;">${court.name}</div>
-          <div class="muted" style="font-size:13px;">${d.full}</div>
-          <div class="muted" style="font-size:13px;">${slotLabel(b.slotIndex)} · ${court.kind}</div>
+          <div style="font-weight:700;font-size:16px;">${d.full}</div>
+          <div style="font-weight:600;font-size:14px;margin-top:1px;">${slotLabel(b.slotIndex)} <span class="muted" style="font-weight:400;">(1h30)</span></div>
+          <div class="muted" style="font-size:12.5px;margin-top:3px;">${court.name} · ${court.kind}</div>
         </div>
         <span class="badge dark">${b.status}</span>
       </div>
