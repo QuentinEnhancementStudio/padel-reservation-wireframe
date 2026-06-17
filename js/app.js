@@ -150,11 +150,20 @@ function spotsToPlayers(f) {
   });
 }
 
+/* Pré-remplit une partie de démonstration (vous + un partenaire) si vide,
+   pour que les écrans atteints via le sélecteur ne soient pas vides. */
+function seedSampleParty() {
+  const f = state.flow;
+  if (f.spots.length > 0) return;
+  f.spots.push({ kind: "me" });
+  if (f.spots.length < f.capacity) f.spots.push({ kind: "member", member: MEMBERS[0] });
+}
+
 function ensureConfirmation() {
   if (state.lastBooking) return;
   setupBooking("new");
+  seedSampleParty();
   const f = state.flow;
-  if (f.spots.length < f.capacity) f.spots.push({ kind: "member", member: MEMBERS[0] });
   state.lastBooking = {
     ref: "PAD-2026-0612", dateIndex: f.dateIndex, slotIndex: f.slotIndex, courtId: f.courtId,
     players: spotsToPlayers(f), total: bookingTotal(), status: "À venir",
@@ -169,7 +178,7 @@ function jumpTo(v) {
     case "slot": ensureFlow(); if (state.flow.slotIndex == null) state.flow.slotIndex = 0; state.screen = "slot"; break;
     case "booking-new": setupBooking("new"); state.screen = "booking"; break;
     case "booking-join": setupBooking("join"); state.screen = "booking"; break;
-    case "payment": if (!state.flow || !state.flow.courtId) setupBooking("new"); state.screen = "payment"; break;
+    case "payment": if (!state.flow || !state.flow.courtId) setupBooking("new"); seedSampleParty(); state.screen = "payment"; break;
     case "confirmation": ensureConfirmation(); state.screen = "confirmation"; break;
     case "reservations": state.screen = "reservations"; state.tab = "resa"; break;
     case "adhesion": state.screen = "adhesion"; state.tab = "adhesion"; break;
@@ -664,31 +673,17 @@ function viewPayment() {
     <div class="card">
       ${lines}
       <div class="kv total" style="margin-top:6px;border-top:1px solid var(--line);padding-top:12px;"><span class="k" style="color:var(--ink);">Total</span><span class="v">${total} €</span></div>
-    </div>
-    <p class="muted" style="font-size:12px;margin:-2px 2px 8px;">Tarif identique pour tous les terrains et créneaux. Calcul selon le nombre de participants et leur statut.</p>`;
-
-  const checkoutCard = `
-    <div class="section-title">Paiement</div>
-    <div class="card">
-      <div class="kv"><span class="k">Mode de paiement</span><span class="v">Paiement sécurisé Wix</span></div>
-      <div class="kv"><span class="k">Confirmation</span><span class="v">${CURRENT_USER.email}</span></div>
-    </div>
-    <div class="feature-soon" style="border-style:solid;">
-      <span class="fs-ico">↗</span>
-      <div><div style="font-weight:600;color:var(--ink-2);font-size:13.5px;">Redirection vers le paiement</div>
-      <div style="font-size:11.5px;">Le règlement s'effectue sur le système de paiement du site (Wix Checkout). La confirmation est envoyée au payeur uniquement.</div></div>
     </div>`;
 
   if (state.view === "desktop") {
-    return `<div class="cols2"><div class="col">${summaryCard}${checkoutCard}</div><div class="col">${participantsCard}</div></div>`;
+    return `<div class="cols2"><div class="col">${summaryCard}</div><div class="col">${participantsCard}</div></div>`;
   }
-  return summaryCard + participantsCard + checkoutCard;
+  return summaryCard + participantsCard;
 }
 
 function barPayment() {
   return `
-    <div class="actionbar stacked">
-      <div class="ab-summary"><span class="ab-lbl">Total à régler</span><span class="ab-amount">${bookingTotal()} €</span></div>
+    <div class="actionbar">
       <button class="btn" data-action="pay">Payer sur Wix ↗</button>
     </div>`;
 }

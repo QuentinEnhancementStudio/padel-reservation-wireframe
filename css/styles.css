@@ -49,6 +49,10 @@ body {
   font-size: 11.5px; color: var(--muted);
   margin: 8px auto 0; max-width: 440px; line-height: 1.45;
 }
+.pf-version {
+  font-size: 10px; color: var(--muted-2); letter-spacing: .5px;
+  margin: 6px 0 0; opacity: .7;
+}
 
 /* ---------- Scène : device + panneau d'annotations ---------- */
 .stage {
