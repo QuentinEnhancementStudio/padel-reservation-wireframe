@@ -115,7 +115,7 @@ function renderToolbar() {
 
   toolbar.innerHTML = `
     <a class="tb-logo" href="https://code.enhancement.studio/" target="_blank" rel="noopener" aria-label="Enhancement Studio">
-      <img src="assets/logo-white.svg" alt="Enhancement Studio" />
+      <img src="assets/logo-icon-white.svg" alt="Enhancement Studio" />
     </a>
     <div class="tb-controls">
       <div class="tb-group">
