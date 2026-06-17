@@ -1,8 +1,23 @@
 /* ============================================================
    Wireframe Padel — système grayscale, mobile first
+   Polices Enhancement Studio (Poppins / Montserrat) chargées
+   en non-bloquant via <link> dans index.html.
    ============================================================ */
 
 :root {
+  /* Enhancement Studio — design chart (outils de revue uniquement,
+     cf. DESIGN_CHART.md). La maquette device reste en niveaux de gris. */
+  --ces-bg-base:    #2B1A29; /* aubergine plum */
+  --ces-bg-glow:    #3A2237; /* halo central */
+  --ces-bg-edge:    #241420; /* bord / vignette */
+  --ces-cyan:       #48D9F3; /* accent primaire */
+  --ces-magenta:    #F72585; /* accent secondaire */
+  --ces-text:       #FFFFFF;
+  --ces-text-body:  #E4DCE2;
+  --ces-text-muted: #C9BCC8;
+  --ces-font-head:  'Poppins', -apple-system, "Segoe UI", sans-serif;
+  --ces-font-body:  'Montserrat', -apple-system, "Segoe UI", sans-serif;
+
   --bg: #e9e9eb;          /* fond hors device */
   --ink: #1c1c1e;         /* texte principal / actions */
   --ink-2: #3a3a3c;
@@ -424,21 +439,25 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
 }
 .note.q .tag { background: var(--surface); color: var(--ink); border: 1px solid var(--ink); }
 /* ---------- Panneau d'annotations (hors device) ----------
-   Même palette que la barre d'outils (indigo / violet) pour
-   bien signaler qu'il s'agit d'un outil de revue, pas du produit. */
+   Charte Enhancement Studio (aubergine + cyan/magenta, cf.
+   DESIGN_CHART.md) : signale qu'il s'agit d'un outil de revue,
+   pas du produit. La maquette device reste en niveaux de gris. */
 .notes-panel {
-  --np-bg: #211f37;
-  --np-accent: #a78bfa;
-  --np-fg: #f0eff7;
-  --np-muted: #9b98c2;
+  --np-bg: var(--ces-bg-base);
+  --np-accent: var(--ces-cyan);
+  --np-accent2: var(--ces-magenta);
+  --np-fg: var(--ces-text-body);
+  --np-muted: var(--ces-text-muted);
   --np-stroke: rgba(255,255,255,.16);
   --np-soft: rgba(255,255,255,.06);
 
   width: 100%;
   max-width: 430px;
-  background: var(--np-bg);
+  font-family: var(--ces-font-body);
+  background:
+    radial-gradient(circle at 50% 0%, var(--ces-bg-glow) 0%, var(--ces-bg-base) 55%, var(--ces-bg-edge) 100%);
   color: var(--np-fg);
-  border: 1px solid var(--np-bg);
+  border: 1px solid var(--ces-bg-edge);
   border-radius: 16px;
   overflow: hidden;
   align-self: stretch;
@@ -465,7 +484,7 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
   border: 1px dashed var(--np-stroke); color: var(--np-fg);
   display: grid; place-items: center; font-size: 15px;
 }
-.np-title { font-size: 14px; font-weight: 700; letter-spacing: -.2px; color: var(--np-fg); }
+.np-title { font-family: var(--ces-font-head); font-size: 14px; font-weight: 600; letter-spacing: -.2px; color: var(--ces-text); }
 .np-sub { font-size: 11px; color: var(--np-muted); margin-top: 1px; }
 .np-close {
   margin-left: auto; flex: 0 0 auto; align-self: flex-start;
@@ -489,7 +508,7 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
 }
 .notes-panel .note:last-child { margin-bottom: 0; }
 .notes-panel .note .tag { background: var(--np-accent); color: var(--np-bg); }
-.notes-panel .note.q .tag { background: transparent; color: var(--np-accent); border: 1px solid var(--np-accent); }
+.notes-panel .note.q .tag { background: transparent; color: var(--np-accent2); border: 1px solid var(--np-accent2); }
 
 /* ---------- Divers ---------- */
 .center { text-align: center; }
@@ -555,14 +574,15 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
 
 /* ============================================================
    Barre d'outils du prototype (hors maquette)
-   Palette volontairement NON grayscale (indigo / violet) pour
-   se distinguer nettement de la maquette en niveaux de gris.
+   Charte Enhancement Studio (aubergine + cyan, cf. DESIGN_CHART.md),
+   volontairement NON grayscale pour se distinguer nettement de la
+   maquette en niveaux de gris.
    ============================================================ */
 .toolbar {
-  --tb-bg: #211f37;
-  --tb-accent: #a78bfa;
-  --tb-fg: #f0eff7;
-  --tb-muted: #9b98c2;
+  --tb-bg: var(--ces-bg-base);
+  --tb-accent: var(--ces-cyan);
+  --tb-fg: var(--ces-text);
+  --tb-muted: var(--ces-text-muted);
   --tb-stroke: rgba(255,255,255,.18);
   --tb-soft: rgba(255,255,255,.07);
 
@@ -570,10 +590,11 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
   display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
   min-height: var(--toolbar-h);
   padding: 5px 12px;
+  font-family: var(--ces-font-body);
   background: var(--tb-bg);
   color: var(--tb-fg);
   border-bottom: 2px solid var(--tb-accent);
-  box-shadow: 0 6px 16px rgba(33,31,55,.24);
+  box-shadow: 0 6px 16px rgba(20,12,18,.34);
 }
 .toolbar svg { width: 16px; height: 16px; display: block; }
 .tb-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
@@ -588,10 +609,11 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
 .tb-select {
   border: 1px solid var(--tb-stroke); border-radius: 8px;
   background: var(--tb-soft); color: var(--tb-fg);
-  font-size: 12.5px; font-weight: 600; padding: 5px 26px 5px 9px; min-height: 32px;
+  font-family: var(--ces-font-body);
+  font-size: 12.5px; font-weight: 500; padding: 5px 26px 5px 9px; min-height: 32px;
   max-width: 220px;
   appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23cfcde8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23C9BCC8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 9px center;
 }
 .tb-select option { color: #1c1c1e; background: #fff; }
@@ -601,14 +623,14 @@ h1.page { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin: 4px 
 }
 .seg button {
   display: inline-flex; align-items: center; justify-content: center;
-  border: none; background: transparent; color: #cbc9e6;
+  border: none; background: transparent; color: var(--ces-text-muted);
   padding: 6px 11px; min-height: 32px;
 }
 .seg button.on { background: var(--tb-accent); color: var(--tb-bg); }
 .seg button + button { border-left: 1px solid var(--tb-stroke); }
 .tb-iconbtn {
   display: inline-grid; place-items: center;
-  border: 1px solid var(--tb-stroke); background: var(--tb-soft); color: #cbc9e6;
+  border: 1px solid var(--tb-stroke); background: var(--tb-soft); color: var(--ces-text-muted);
   border-radius: 8px; min-height: 32px; min-width: 34px;
 }
 .tb-iconbtn.on { background: var(--tb-accent); color: var(--tb-bg); border-color: var(--tb-accent); }
